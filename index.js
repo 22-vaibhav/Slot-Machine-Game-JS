@@ -2,9 +2,9 @@
 // 2. Determine number of lines to bet on ✔️
 // 3. Collect a bet amount ✔️
 // 4. Spin the slot machine ✔️
-// 5. Check if the user won
-// 6. Give the user their winnings
-// 7. Play again
+// 5. Check if the user won ✔️
+// 6. Give the user their winnings ✔️
+// 7. Play again ✔️
 
 
 const prompt = require("prompt-sync")();
@@ -137,13 +137,41 @@ const getWinnings = (rows, bet, lines) => {
                 break;
             }
         }
+
+        if (allSame) {
+            winnings += bet * SYMBOL_VALUES[symbols[0]];
+        }
     }
+
+    return winnings;
+}
+
+const game = () => {
+    let balance = deposit();
+
+    while (true) {
+        console.log("You have a balance of $" + balance);
+        const numberOfLines = getNumberOfLines();
+        const bet = getBet(balance, numberOfLines);
+        balance -= bet * numberOfLines;
+        const reels = spin();
+        const rows = transpose(reels);
+        printRows(rows);
+        const winnings = getWinnings(rows, bet, numberOfLines);
+        balance += winnings;
+        console.log("You won, $" + winnings.toString());
+
+        if (balance <= 0) {
+            console.log("You ran out of money!!");
+            break;
+        }
+
+        const playAgain = prompt("Do you want to play again(y/n)");
+        
+        if (playAgain != 'y') break;
+    }
+    
 }
 
 
-let balance = deposit()
-const numberOfLines = getNumberOfLines()
-const bet = getBet(balance, numberOfLines);
-const reels = spin()
-const rows = transpose(reels);
-printRows(rows);
+game();
